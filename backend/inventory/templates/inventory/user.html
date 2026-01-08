@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Register</title>
+    <link href="https://fonts.googleapis.com/css2?family=Italiana&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=PlayfairDisplay=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .auth-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 350px;
+            text-align: center;
+        }
+        .auth-container h2 {
+            margin-bottom: 20px;
+            font-family: 'Italiana', serif;
+        }
+        .auth-container input, .auth-container select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .auth-container button {
+            width: 100%;
+            padding: 12px;
+            background-color: #48342c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="auth-container">
+    {% if user.is_authenticated %}
+        <h2 style="color: #48342c; font-weight: bold">Welcome, {{ user.username }}</h2>
+        <p>You are currently logged in.</p>
+        
+        <form action="{% url 'logout' %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" style="font-family:'Josefin Sans', sans-serif; background-color: #422d2dff;">
+                Logout
+            </button>
+        </form>
+        
+        <div style="margin-top: 20px;">
+            <a href="{% url 'home' %}" style="color: black; text-decoration: none;">← Back to Home</a>
+        </div>
+
+    {% else %}
+        <h2 style="color: #48342c; font-weight: bold">Login or Register</h2>
+        <form id="auth-form" method="POST" action="{% url 'user' %}">
+            {% csrf_token %}
+            <input type="text" name="username" id="username" placeholder="Username" required>
+            <input type="password" name="password" id="password" placeholder="Password" required>
+            <select name="role" id="user-type" required>
+                <option value="">Select User Type</option>
+                <option value="customer">Customer</option>
+                <option value="staff">Staff</option>
+            </select>
+            <button type="submit" style="font-family:'Josefin Sans', sans-serif;">Submit</button>
+        </form>
+        
+        <div style="margin-top: 20px; font-size: 14px; color: #555;">
+            <p>Don't have an account?</p>
+            <a href="{% url 'register' %}" class="register-btn" style="color: black">Sign Up / Register</a>
+        </div>
+    {% endif %}
+
+    {% if messages %}
+        {% for message in messages %}
+        <p style="color: red; font-size: 14px;">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+</div>
+
+</body>
+</html>

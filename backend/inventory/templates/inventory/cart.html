@@ -1,0 +1,361 @@
+{% load static %}
+<!-- Header Section -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FurniQ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Italiana&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=PlayfairDisplay=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style> 
+        .navbar-custom {
+            background-color: #d9d4d4; /* Light grey */
+            padding: 10px 0;
+        }
+        .navbar-nav .nav-link {
+            font-family:'Italiana',serif;
+            font-size: 19px;
+            margin: 0 12px;
+            color: black;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #5a3b2e; /* Brown hover */
+        }
+        .logo-text {
+            font-family:'Playair Display', serif;
+            font-size: 20px;
+            font-weight: regular;
+            color: #4b2e1e; /* Brown */
+        }
+        .search-bar {
+            border-radius: 50px;
+            padding: 5px 15px;
+            border: none;
+            outline: none;
+            width: 245px;
+        }
+        .icon-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            margin-left: 10px;
+            cursor: pointer;
+            color: black;
+        } 
+        
+       .icon-btn:hover {
+            color: #5a3b2e; /* Brown hover */
+            /*animation: expand-contract 1s ease-in-out;*/
+            transform: scale(1.15);
+       }
+        .btn-remove-custom:hover {
+          background-color: #7c5a43 !important;
+          color: white !important;
+        }
+        .payment-modal { 
+            position: fixed; inset: 0; 
+            background: rgba(0,0,0,0.5); display: flex; 
+            align-items: center; justify-content: center; 
+            z-index: 2000; padding: 20px; 
+        }
+        .payment-modal-dialog { 
+            background: #fff; border-radius: 12px; 
+            padding: 25px; max-width: 500px; 
+            width: 100%; position: relative; 
+        }
+        .pm-close { 
+            position: absolute; right: 15px; top: 10px; 
+            border: none; background: #eee; 
+            border-radius: 5px; cursor: pointer; 
+        }
+        .pm-option { 
+            display: flex; align-items: center; 
+            border: 1px solid #ddd; border-radius: 10px; 
+            padding: 15px; margin: 10px 0; cursor: pointer; 
+            transition: 0.3s; 
+        }
+        .pm-option:hover { 
+            background: #f9f9f9; 
+        }
+        .pm-icon { 
+            width: 40px; height: 40px; border-radius: 8px; 
+            display: flex; align-items: center; 
+            justify-content: center; color: white; 
+            font-weight: bold; margin-right: 15px; 
+        }
+        .pm-icon.red { 
+            background: #e63946; 
+        }
+        .pm-icon.green { 
+            background: #28a745; 
+        }
+        .hidden { 
+            display: none; 
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid">
+        <!-- Left Menu -->
+        <ul class="navbar-nav flex-row">
+            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'livingroom' %}">Living Room</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'bedroom' %}">Bedroom</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'dining' %}">Dining</a></li>
+        </ul>
+
+        <!-- Center Logo -->
+        <a class="navbar-brand mx-auto text-center" href="index.html" align-items="center">
+            <img src="{% static 'images/FurniQ.png' %}" alt="Logo" height="40" class="d-inline-block align-text-center">
+            <span class="logo-text">FURNIQ</span>
+        </a>
+
+        <!-- Right Side -->
+        <div class="d-flex align-items-center">
+        <form action="{% url 'search_results'%}" method="GET" class="position-relative">
+            <div class="position-relative">
+                <input type="text" name="q" class="search-bar" placeholder="Search products...">
+                <button type="submit" style="background:none; border:none; position:absolute; right:15px; top:8px; padding:0;">
+                    <i class="fa fa-search "></i>
+                </button>
+            </div>
+        </form>
+            <a href="cart.html" class="icon-btn position-relative">
+                <i class="fa fa-shopping-cart"></i>
+            </a>
+            <!--<button class="icon-btn"><i class="fa fa-user"></i></button>-->
+            <a href="{% url 'product_list' %}"> <a href="{% url 'user' %}" class="icon-btn"><i class="fa fa-user"></i></a>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section Start -->
+<section class="container-fluid py-5 bg-white text-center">
+    <h1 class="display-5 fw-normal" style="letter-spacing:0.2em; font-family: 'Italiana', serif;">CART</h1>
+    <hr class="mt-4" style="border-top:2px solid #333;">
+</section>
+<!-- Hero Section End -->
+<div class="container py-5" style="min-height: 60vh;">
+    <div id="cart-content" class="text-center w-100" style="font-family: 'Italiana', serif;">
+        <p class="mt-5" style="font-size: 1.3rem;">Your cart is empty.</p>
+    </div>
+</div>
+
+<script>
+const PRODUCT_PRICES = {
+    "Floralshell Chair": 9000,
+    "Fuzzy sofa": 10000, 
+    "Coffee Table Marble": 90000,
+    "Flower ArmChair": 9000,
+    "Ottoman": 8500,
+    "Lorenz Sofa": 80000,
+    "Bedside Table Wooden": 12000,
+    "Bouclé Bed": 150000,
+    "Arch headframe bed": 140000,
+    "Bubble bed": 100000,
+    "Odile Bedside Table": 9000,
+    "Channel Puffy Bed": 90000,
+    "Dining Table set": 100000,
+    "Scandinavian Dining Table Set": 60000,
+    "Oval Ceramic Dining Table": 150000,
+    "POVISON Modern Dining Table": 140000,
+    "Round Marble Dining Set": 100000,
+    "Curved wooden with Cushion dining": 80000
+};
+function renderCart() {
+    // 1. Get items from memory
+    const savedData = localStorage.getItem('cart');
+    const cart = savedData ? JSON.parse(savedData) : {};
+    const cartContent = document.getElementById('cart-content');
+    
+    // 2. Check if empty
+    if (!cart || Object.keys(cart).length === 0) {
+        cartContent.innerHTML = '<p class="mt-5" style="font-size: 1.3rem;">Your cart is empty.</p>';
+        return;
+    }
+
+    // 3. Create the List Table
+    let totalAmount = 0;
+    let html = `<div class="container" style="max-width:700px; font-family: Italiana, serif;">`;
+    html += `<table class="table text-start shadow-sm">`;
+    html += `<thead class="table-light">
+                <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th colspan = 2>Action</th>
+                </tr></thead><tbody>`;
+
+    Object.entries(cart).forEach(([name, qty]) => {
+    const price = PRODUCT_PRICES[name] || 0;
+    const subtotal = price * qty;
+    totalAmount += subtotal;
+
+    html += `<tr>
+        <td class="align-middle">${name}</td>
+        <td class="align-middle">Rs.${price}</td> 
+        <td class="align-middle">${qty}</td>
+        <td class="text-center">
+            <button class="btn btn-sm btn-remove-custom" 
+                    style="background-color: #7c5a43; color: white; border: none; padding: 5px 15px;" 
+                    onclick="removeFromCart('${name}')">
+                Remove
+            </button>
+        </td>
+    </tr>`;
+});
+
+    html += `</tbody></table>`;
+    
+    html +=
+    `<div class="text-end mt-2"><strong>Cart Total: ${totalAmount}</strong></div>`;
+    // 4. Add Payment Section
+    html += `
+    <div class="mt-4 p-4 border rounded text-start bg-light">
+        <h5>Select Payment Method</h5>
+        <div class="form-check"><input class="form-check-input" type="radio" name="pay" checked> Khalti </div>
+        <div class="form-check"><input class="form-check-input" type="radio" name="pay" checked> E-sewa </div>
+        <div class="form-check mb-3"><input class="form-check-input" type="radio" name="pay"> Cash on Delivery</div>
+        <button class="btn btn-dark w-100" onclick="checkout(${totalAmount})">Confirm Order</button>
+    </div></div>`;
+    
+    //html += `</div>`;
+    
+    // 5. Inject into the page (This replaces "Your cart is empty")
+    cartContent.innerHTML = html;
+
+    //document.querySelectorAll('.pm-total').forEach(span =>{span.innerText = totalAmount;});
+}
+
+function removeFromCart(name) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || {};
+    delete cart[name];
+    localStorage.setItem('cart', JSON.stringify(cart));
+    renderCart(); // Refresh the list
+}
+
+// New Checkout function to open the modal
+function checkout(amount) {
+    const cart = JSON.parse(localStorage.getItem('cart')) || {};
+    if (Object.keys(cart).length === 0) {
+        alert("Your cart is empty.");
+        return;
+    }
+    
+    // Check which radio button is selected
+    const selectedMethod = document.querySelector('input[name="pay"]:checked');
+    
+    // If Cash on Delivery is selected, use old logic
+    if (selectedMethod && selectedMethod.parentNode.textContent.includes("Cash on Delivery")) {
+        alert("Order Placed Successfully via Cash on Delivery!");
+        localStorage.removeItem('cart');
+        renderCart();
+    } else {
+        // Otherwise, open the Online Payment Modal
+       // document.getElementById('order-amount').textContent = amount;
+        openPaymentModal();
+        document.querySelectorAll('.pm-total').forEach(span =>{span.innerText = amount;});
+    }
+}
+
+// Logic to handle Modal panels and simulation
+function openPaymentModal() {
+    document.getElementById('payment-modal').style.display = 'flex';
+    showPanel('list');
+}
+
+function showPanel(name) {
+    document.querySelectorAll('.pm-panel').forEach(p => p.classList.add('hidden'));
+    document.querySelector('.pm-' + name).classList.remove('hidden');
+}
+
+// Event Listeners for Modal (Add this inside your existing <script>)
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('pm-close') || e.target.id === 'continue-shopping') {
+        document.getElementById('payment-modal').style.display = 'none';
+    }
+    if (e.target.classList.contains('pm-go')) {
+        showPanel(e.target.dataset.provider);
+    }
+    if (e.target.classList.contains('pm-back')) {
+        showPanel('list');
+    }
+    if (e.target.classList.contains('pm-pay')) {
+        // Process Payment Simulation
+        const finalTotal  = document.querySelector('.pm-total').innerText;
+        const orderNum = 'FNQ' + Math.floor(Math.random() * 1000000);
+        document.getElementById('order-number').textContent = orderNum;
+        document.getElementById('order-amount').textContent = finalTotal;
+        
+        setTimeout(() => {
+            localStorage.removeItem('cart');
+            renderCart();
+            showPanel('success');
+        }, 1000);
+    }
+});
+
+//  Runs the function when the page opens
+document.addEventListener('DOMContentLoaded', renderCart);
+</script>
+<div id="payment-modal" class="payment-modal" style="display:none;">
+    <div class="payment-modal-dialog">
+        <button class="pm-close" title="Close">×</button>
+
+        <div class="pm-panel pm-list">
+            <h4 style="font-family:'Italiana',serif;">Select Payment Method</h4>
+            <div class="pm-note" style="background:#fff3cd; padding:10px; border-radius:6px; margin:10px 0;">Test Mode Active — No real money will be charged.</div>
+            <p>Total Amount: <strong>Rs. <span class="pm-total">0</span></strong></p>
+
+            <div class="pm-option">
+                <div class="pm-left"><div class="pm-icon red">K</div></div>
+                <div class="pm-mid"><div style="font-weight:600">Khalti by IME</div><div class="text-muted">Digital Wallet</div></div>
+                <div class="pm-right"><button class="btn btn-link pm-go" data-provider="khalti">Select →</button></div>
+            </div>
+
+            <div class="pm-option">
+                <div class="pm-left"><div class="pm-icon green">e</div></div>
+                <div class="pm-mid"><div style="font-weight:600">eSewa</div><div class="text-muted">Digital Payment</div></div>
+                <div class="pm-right"><button class="btn btn-link pm-go" data-provider="esewa">Select →</button></div>
+            </div>
+        </div>
+
+        <div class="pm-panel pm-khalti hidden">
+            <button class="btn btn-link pm-back">← Back</button>
+            <h5>Khalti by IME</h5>
+            <div class="pm-amount-box" style="margin:10px 0;"><div style="font-size:14px;color:#666">Total Amount</div><div style="font-size:20px;color:#e63946;">Rs. <span class="pm-total">0</span></div></div>
+            <div class="mb-2"><label class="form-label">Khalti Mobile Number</label><input type="text" class="form-control pm-input pm-k-mobile" placeholder="98XXXXXXXX"></div>
+            <div class="mb-2"><label class="form-label">Khalti PIN</label><input type="password" class="form-control pm-input pm-k-pin" placeholder="Enter your 4-digit PIN"></div>
+            <div class="pm-error text-danger small d-none"></div>
+            <button class="btn w-100 pm-pay" data-provider="khalti" style="background:#e63946;color:#fff;border-color:#e63946;">Pay Rs. <span class="pm-total">0</span></button>
+        </div>
+
+        <div class="pm-panel pm-esewa hidden">
+            <button class="btn btn-link pm-back">← Back</button>
+            <h5>eSewa Payment</h5>
+            <div class="pm-amount-box" style="margin:10px 0;"><div style="font-size:14px;color:#666">Total Amount</div><div style="font-size:20px;color:#28a745;">Rs. <span class="pm-total">0</span></div></div>
+            <div class="mb-2"><label class="form-label">eSewa ID</label><input type="text" class="form-control pm-input pm-e-id" placeholder="Enter ID"></div>
+            <div class="mb-2"><label class="form-label">Password</label><input type="password" class="form-control pm-input pm-e-pass" placeholder="Password"></div>
+            <div class="pm-error text-danger small d-none"></div>
+            <button class="btn w-100 pm-pay" data-provider="esewa" style="background:#28a745;color:#fff;border-color:#28a745;">Pay Rs. <span class="pm-total">0</span></button>
+        </div>
+
+        <div class="pm-panel pm-success hidden" style="text-align:center;">
+            <div style="font-size:48px;color:#28a745;">✔</div>
+            <h4>Order Placed!</h4>
+            <div class="card p-3 my-3 text-start">
+                <div><strong>Order #:</strong> <span id="order-number">-</span></div>
+                <div><strong>Paid:</strong> Rs. <span id="order-amount">0</span></div>
+            </div>
+            <button id="continue-shopping" class="btn btn-dark w-100">Continue Shopping</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,339 @@
+{% load static %}
+<!-- Header Section -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FurniQ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Italiana&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=PlayfairDisplay=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <!--<a href="admin.html">Admin</a>
+    <a href="employee.html">Employee</a>-->
+
+    <style>
+        
+        .navbar-custom {
+            background-color: #d9d4d4; /* Light grey */
+            padding: 10px 0;
+        }
+        .navbar-nav .nav-link {
+            
+            font-family:'Italiana',serif;
+            font-size: 19px;
+            margin: 0 12px;
+            color: black;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #5a3b2e; /* Brown hover */
+            transform: scale(1.15);
+            transition: transform 0.25s ease-in-out, color 0.3s ease-in-out;
+        }
+        /*Logo*/
+        .logo-text {
+            font-weight: bold;
+            font-family:'Italiana', serif;
+            font-size: 22px;
+            font-weight: regular;
+            color: #4b2e1e; /* Brown */
+        }
+        .search-bar {
+            border-radius: 50px;
+            padding: 5px 15px;
+            border: none;
+            outline: none;
+            width: 245px;
+        }
+        .icon-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            margin-left: 10px;
+            cursor: pointer;
+            color: black;
+            transition: transform 0.15s ease-in-out, color 0.3s ease-in-out;
+        }
+    
+    .icon-btn:hover {
+        color: #5a3b2e; /* Brown hover */
+        /*animation: expand-contract 1s ease-in-out;*/
+        transform: scale(1.15);
+    }
+    
+    </style>
+
+</head>
+
+<script>
+    function addToCart(productName){
+        let cart = JSON.parse(localStorage.getItem('cart')) || {};
+
+        if (cart[productName]){
+            cart[productName] += 1;
+        } else {
+            cart[productName] = 1;
+        }
+
+        localStorage.setItem('cart', JSON.stringify(cart));
+
+        alert(productName + " added to cart! ");
+    }
+</script>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid">
+        <!-- Left Menu -->
+        <ul class="navbar-nav flex-row">
+            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'livingroom' %}">Living Room</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'bedroom' %}">Bedroom</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'dining' %}">Dining</a></li>
+        </ul>
+
+        <!-- Center Logo -->
+        <a class="navbar-brand mx-auto text-center" href="#" align-items="center">
+            <img src="{% static 'images/FurniQ.png' %}" alt="Logo" height="40" class="d-inline-block align-text-center">
+            <span class="logo-text">FURNIQ</span>
+        </a>
+
+        <!-- Right Side -->
+        <div class="d-flex align-items-center">
+
+            <form action="{% url 'search_results' %}" method="GET" class="position-relative">
+
+
+                <div class="position-relative">
+                    <input type="text" name = "q" class="search-bar" placeholder="Search products...">
+                    <button type="submit" style="background:none; border:none; position:absolute; right:15px; top:8px; padding:0;">
+                    <i class="fa fa-search "></i>
+                    </button>
+                </div>
+            </form>
+
+            <a href="{% url 'cart' %}" class="icon-btn"><i class="fa fa-shopping-cart"></i></a>
+
+            <a href="{% url 'product_list' %}"> <a href="{% url 'user' %}" class="icon-btn"><i class="fa fa-user"></i></a>
+            <!--<button class="icon-btn"><i class="fa fa-user"></i></button>-->
+           
+            
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<div class="hero-section" style="position:relative;">
+    <img src="{% static 'images/hero section.jpg' %}" alt="Living Room" style="width:100%; height:420px; object-fit:cover;">
+    <h1 style="
+        position:absolute;
+        top:20%;
+        left:39%;
+        transform:translate(-50%,-50%);
+        color:#5a3b2e;
+        font-family:'Italiana', serif;
+        font-size:42px;
+        font-weight:500;
+        text-align:center;
+        width:100%;
+        font-weight: bold;
+        ">
+        Where comfort meets class
+    </h1>
+</div>
+
+<!-- Welcome Message -->
+<div style="background:#fff; padding:40px 0; text-align:center;">
+    <h2 style="font-weight: bold; font-family:'Italiana',serif; font-size:32px; letter-spacing:2px; margin-bottom:18px;">
+        WELCOME TO THE FURNIQ
+    </h2>
+    <p style="font-style: italic; font-family:'Italiana',serif; font-size:20px;font-weight: bold;">
+        Your ulimate solution of quality home!
+    </p>
+</div>
+
+<!-- Featured Products Section -->
+<div class="container my-5">
+    <h2 class="featured-title" style="font-weight: bold; font-family:'Italiana',serif; font-size:28px; margin-bottom:10px; text-align:left;">
+        Featured Products
+    </h2>
+    <p class="featured-subtitle" style="font-weight: bold; font-family:'Italiana',serif; font-size:18px; margin-bottom:40px; text-align:left; color:#333;">
+        Some of our best selling products
+    </p>
+    <div class="row g-5">
+        <!-- Product 1 -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm" style="border-radius:24px;">
+                <img src="{% static 'images/Florashell chair.jpeg' %}" class="card-img-top" alt="Floralshell Chair" style="border-radius:24px; height:270px; object-fit:cover;">
+                <div class="card-body text-left px-3">
+                    <div style="font-family:'Italiana',serif; font-size:20px; font-weight: bold;">Floralshell Chair</div>
+                    
+                    <div style="font-family:'Italiana',serif; font-size:17px;font-weight: bold;">
+                        Rs 9000 <span style="text-decoration:line-through; color:#777; margin-left:8px;">Rs 10000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Product 2 -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm" style="border-radius:24px;">
+                <img src="{% static 'images/Fuzzy sofa.jpeg' %}" class="card-img-top" alt="Fuzzy Sofa" style="border-radius:24px; height:270px; object-fit:cover;">
+                <div class="card-body text-left px-3">
+                    <div style="font-family:'Italiana',serif; font-size:20px; font-weight: bold;">Fuzzy Sofa</div>
+                    <div style="font-family:'Italiana',serif; font-size:17px; font-weight: bold;">
+                        Rs 15000 <span style="text-decoration:line-through; color:#777; margin-left:8px;">Rs 10000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Product 3 -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm" style="border-radius:24px;">
+                <img src="{% static 'images/Puffy bed.jpeg' %}" class="card-img-top" alt="Puffy Bed" style="border-radius:24px; height:270px; object-fit:cover;">
+                <div class="card-body text-left px-3">
+                    <div style="font-family:'Italiana',serif; font-size:20px; font-weight: bold;">Puffy Bed</div>
+                    <div style="font-family:'Italiana',serif; font-size:17px; font-weight: bold;">
+                        Rs 90000 <span style="text-decoration:line-through; color:#777; margin-left:8px;">Rs 80000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Product 4 -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm" style="border-radius:24px;">
+                <img src="{% static 'images/Bedside Table.jpeg' %}" class="card-img-top" alt="Bedside Table Wooden" style="border-radius:24px; height:270px; object-fit:cover;">
+                <div class="card-body text-left px-3">
+                    <div style="font-family:'Italiana',serif; font-size:20px; font-weight: bold;">Bedside Table Wooden</div>
+                    <div style="font-family:'Italiana',serif; font-size:17px; font-weight: bold;">
+                        Rs 12000 <span style="text-decoration:line-through; color:#777; margin-left:8px;">Rs 18000 </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Product 5 -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm" style="border-radius:24px;">
+                <img src="{% static 'images/Coffee Table.jpeg' %}" class="card-img-top" alt="Coffee Table Marble" style="border-radius:24px; height:270px; object-fit:cover;">
+                <div class="card-body text-left px-3">
+                    <div style="font-family:'Italiana',serif; font-size:20px; font-weight: bold;">Coffee Table Marble</div>
+                    <div style="font-family:'Italiana',serif; font-size:17px; font-weight: bold;">
+                        Rs 90000 <span style="text-decoration:line-through; color:#777; margin-left:8px;">Rs 100000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Product 6 -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm" style="border-radius:24px;">
+                <img src="{% static 'images/Dining Table Set.jpeg' %}" class="card-img-top" alt="Dining Table Set" style="border-radius:24px; height:270px; object-fit:cover;">
+                <div class="card-body text-left px-3">
+                    <div style="font-family:'Italiana',serif; font-size:20px; font-weight: bold;">Dining Table Set</div>
+                    <div style="font-family:'Italiana',serif; font-size:17px; font-weight: bold;">
+                        Rs 100000 <span style="text-decoration:line-through; color:#777; margin-left:8px;">Rs 110000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Creative Collection Section -->
+<div class="container-fluid py-5" style="background:#cfc7bd;">
+    <div class="row align-items-center justify-content-center">
+        <div class="col-lg-6 px-5">
+            <h2 style="font-family:'Italiana',serif; font-size:28px; margin-bottom:18px;font-weight: bold;">
+                Introducing Creative Collection For Your Interior
+            </h2>
+            <p style="font-family:'Josefin Sans', sans-serif; font-size:20px;">
+                Transform your space with FurniQ—where innovative design meets effortless management, turning your furniture vision into reality.
+            </p>
+        </div>
+        <div class="col-lg-5 d-flex justify-content-center">
+            <img src="{% static 'images/Creative collection.jpeg' %}" alt="Creative Collection" class="img-fluid shadow" style="border-radius:32px; max-width:90%; min-width:280px;">
+        </div>
+    </div>
+</div>
+
+<!-- Explore the Collection Section -->
+<div class="container my-5">
+    <h2 style="font-family:'Italiana',serif; font-size:24px; margin-bottom:32px;font-weight: bold;">
+        Explore the collection
+    </h2>
+    <div class="row justify-content-center">
+        <div class="col-md-4 d-flex flex-column align-items-center mb-4">
+            <div class="shadow-sm bg-white" style="border-radius:8px; padding:24px;">
+                <img src="{% static 'images/Dining.jpeg' %}" alt="Dining" style="width:280px; height:280px; object-fit:contain;">
+            </div>
+            <div style="font-family:'Italiana',serif; font-size:20px; margin-top:12px;">Dining</div>
+        </div>
+        <div class="col-md-4 d-flex flex-column align-items-center mb-4">
+            <div class="shadow-sm bg-white" style="border-radius:8px; padding:24px;">
+                <img src="{% static 'images/Living Room.jpeg' %}" alt="Living Room" style="width: 280px; height:280px; object-fit:contain;">
+            </div>
+            <div style="font-family:'Italiana',serif; font-size:20px; margin-top:12px;">Living Room</div>
+        </div>
+        <div class="col-md-4 d-flex flex-column align-items-center mb-4">
+            <div class="shadow-sm bg-white" style="border-radius:8px; padding:24px;">
+                <img src="{% static 'images/Bedroom.jpeg' %}" alt="Bedroom" style="width:280px; height:280px; object-fit:contain;">
+            </div>
+            <div style="font-family:'Italiana',serif; font-size:20px; margin-top:12px;">Bedroom</div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer Section -->
+<footer style="background:#dedcdc; padding:40px 0 0 0; font-family:'Italiana',serif;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div style="font-size:20px; margin-bottom:18px; font-weight: bold;">Where comfort meets class.</div>
+                <div style="font-size:15px; margin-bottom:10px; font-weight: bold;">Subscribe and follow for news, product release and more</div>
+                <form class="d-flex mb-3" style="max-width:280px;">
+                    <input type="email" class="form-control rounded-0" placeholder="Enter email" style="border:none; border-bottom:1px solid #aaa; border-radius:0; background:transparent;">
+                    <button type="submit" class="btn btn-link p-0 ms-2" style="color:#222; text-decoration:none;"><i class="fa fa-arrow-right"></i></button>
+                </form>
+                <div>
+                    <a href="#" style="color:#222; margin-right:12px;"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" style="color:#222; margin-right:12px;"><i class="fab fa-instagram"></i></a>
+                    <a href="#" style="color:#222;"><i class="fa fa-envelope"></i></a>
+                </div>
+            </div>
+            <div class="col-md-2 mb-4">
+                <div style="font-size:18px; margin-bottom:12px; font-weight: bold;">Explore</div>
+                <div style="font-size:16px;">Bedroom</div>
+                <div style="font-size:16px;">Bathroom</div>
+                <div style="font-size:16px;">Dining</div>
+                <div style="font-size:16px;">Living</div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div style="font-size:18px; margin-bottom:12px; font-weight: bold;">Our Services</div>
+                <div style="font-size:16px;">Interior Consultation</div>
+                <div style="font-size:16px;">Bulk orders</div>
+                <div style="font-size:16px;">Reliable and Efficient Shipping</div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div style="font-size:18px; margin-bottom:12px; font-weight: bold;">Contact Us</div>
+                <div style="font-size:16px; font-weight: bold;"><i class="fa fa-phone me-2"></i>+977 979-9999999</div>
+                <div style="font-size:16px;"><i class="fa fa-envelope me-2"></i>furniq@gmail.com</div>
+            </div>
+        </div>
+        <div class="row border-top pt-3 pb-2" style="font-size:15px;">
+            <div class="col-md-6 text-start">
+                <span><i class="fa fa-copyright"></i> 2025 FurniQ . All Rights Reserved</span>
+            </div>
+            <div class="col-md-6 text-end">
+                <a href="#" style="color:#222; margin-right:18px;">FAQ</a>
+                <a href="#" style="color:#222; margin-right:18px;">Privacy</a>
+                <a href="#" style="color:#222;">Terms and Conditions</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

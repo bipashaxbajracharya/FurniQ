@@ -1,0 +1,26 @@
+
+{% include 'inventory/header & footer.html' %}
+
+<div class="container mt-5">
+    <h2>Results for "{{ query }}"</h2>
+    <hr>
+    <div class="row">
+        {% for product in results %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">Category: {{product.category}}</p>
+                    <p class="fw-bold">Price: Rs.{{ product.price }}</p>
+                    <button class = "btn btn-dark">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class = "col-12 text-center">
+            <p>No products found matching your search.</p>
+            <a href="{% url 'home' %}" class="btn btn-outline-brown">Back to Home</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html> 
+<head>
+    <title>FurniQ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Italiana&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+<style>
+    body { 
+        font-family:'Italiana', serif; 
+        padding: 20px;
+        background-color: #f3f2f2ff;
+    }
+    h1 {
+        color: #312222ff; /* Added semicolon here */
+        font-family: 'Italiana', serif; /* for furniture inventory first heading */
+    }
+    table{
+        width: 100%;
+        border-collapse: separate;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(56, 35, 35, 0.1);
+        background-color: #d4c5c5ff;
+    }
+    th, td{
+        font-family:'Italiana', serif;
+        font-weight: bold;
+        padding: 12px, 15px;
+        text-align: center;
+        border-bottom: 1px solid #ffffffff;
+        border-color: #ffffffff;
+    }
+    th{
+        font-family:'Italiana', serif;
+        background-color: #5b463dff;
+        color: white;
+        text-transform: uppercase;
+        border-bottom: 1px solid #ffffffff;
+    }
+    tr:hover { background-color: #cec4c4ff;}
+</style>
+</head>
+<body>
+    <h1> FurniQ Inventory </h1>
+    <!--Will show you in list-->
+    <!--<ul>
+        {% for product in products %}
+           <li>{{ product.name }} - ${{ product.price }} (Stock: {{ product.stock }}) </li>
+        {% endfor %}
+    </ul>-->
+
+    <!--Will show you in table-->
+<div class="container mt-4">
+    <h2> Welcome, {{ user.username }} </h2>
+    <p>Below are the products currently under your management: </p>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th> Staff In-charge </th>
+                <th> Product name </th>
+                <th> Price </th>
+                <th> Stock </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                
+                <td> 
+                    {% if product.assigned_staff %}
+                       {{ product.assigned_staff.username }}
+                    {% else %}
+                    <span style="color: gray;"> Unassigned </span>
+                    {% endif %}
+                </td>
+                <td> {{ product.name }}</td>
+                <td> {{ product.price }}</td>
+                <td> {{ product.stock }}</td>
+                <td>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <form action="{% url 'update_stock' product.id %}" method="POST" class="me-2">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="decrease">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">-</button>
+                        </form>
+                        <span class="fw-bold mx-2">{{ product.stock }}</span>
+                        <form action="{% url 'update_stock' product.id %}" method="POST" class="ms-2">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="increase">
+                            <button type="submit" class="btn btn-sm btn-outline-success">+</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4"> No products found matching your search.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
