@@ -1,0 +1,37 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | FURNIQ Management{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+
+ <link href="https://fonts.googleapis.com/css2?family=Italiana&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=PlayfairDisplay=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+
+<style type="text/css">
+    /* Top Navigation Bar */
+    #header { background: #432f27 !important; color: #fff; font-family: 'Josefin Sans', sans-serif !important; }
+    
+    /* Breadcrumbs Bar */
+    .breadcrumbs { background: #cfc7bd !important; color: #e6e2e2 !important; font-family: 'Josefin Sans', sans-serif !important;}
+    .breadcrumbs a { color: #332019 !important; font-weight: bold; font-family: 'Josefin Sans', sans-serif !important;}
+
+    /* Module Headers (e.g., "Inventory") */
+    .module h2, .module caption { background: #432f27 !important; color: #4f40329c !important; font-family: 'Italiana', serif !important; font-weight: bold }
+    
+    /* Side Bar Highlight....my action... */
+    #content-related { background: #f1e6e6; border-left: 5px solid #cfc7bd; font-family: 'Italiana', serif !important; font-weight: bold; color: #cccbca; }
+    
+    /* Customizing the "Add" and "Change" buttons */
+    .addlink, .changelink { color: #5a3b2e !important; font-family: 'Josefin Sans', sans-serif !important;}
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <img src="{% static 'images/FurniQ.png' %}" alt="" height="30" style="vertical-align: middle; margin-right: 10px;">
+    <a href="{% url 'admin:index' %}" style="color: white; font-family: 'Italiana', serif;">FURNIQ Dashboard</a>
+</h1>
+{% endblock %}

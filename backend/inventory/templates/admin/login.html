@@ -1,0 +1,52 @@
+{% extends "admin/login.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+
+    <link href="https://fonts.googleapis.com/css2?family=Italiana&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=PlayfairDisplay=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+
+<style type="text/css">
+    /* Use Italiana for the main brand title */
+    #site-name a { 
+        font-family: 'Italiana', serif !important; 
+        font-size: 28px !important; 
+        color: #ffffff !important; 
+        
+    }
+    
+    /* Use Josefin Sans for labels and inputs */
+    label, input { 
+        font-family: 'Josefin Sans', sans-serif !important; 
+        color: #1f1e1e !important;
+    }
+    input{
+        font-family: 'Josefin Sans', sans-serif !important; 
+        color: #d9d4d4  !important;
+    }
+    
+    body {
+        background-color: #d9d4d4 !important;
+    }
+    /* Use Playfair Display for the "Log in" header */
+    .login #content-main h2 {
+        font-family: 'Playfair Display', serif !important;
+        font-weight: 700;
+        text-transform: capitalize;
+        
+    }
+
+    #header { background: #5a3b2e !important; }
+    .submit-row input { background: #5a3b2e !important; border-radius: 4px;  }
+    .submit-row input:hover {
+    background: #4b2e1e !important; /* Slightly darker brown on hover */
+}
+
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'home' %}">FURNIQ Admin</a></h1>
+{% endblock %}

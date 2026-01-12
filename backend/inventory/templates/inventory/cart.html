@@ -96,6 +96,72 @@
         .hidden { 
             display: none; 
         }
+            .nav-icons-container {
+        display: flex;
+        align-items: center;
+        gap: 20px; /* This ensures equal spacing */
+        margin-left: 15px;
+    }
+
+    /* Ensure icons, buttons, and links all behave the same */
+    .nav-icons-container .icon-btn, 
+    .nav-icons-container .dropdown-trigger {
+        margin: 0 !important;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px; 
+        height: 24px;
+        background: none;
+        border: none;
+        color: black;
+        cursor: pointer;
+        transition: transform 0.15s ease-in-out, color 0.3s ease-in-out;
+        text-decoration: none;
+    }
+
+    /* Combined Hover for all icons */
+    .nav-icons-container .icon-btn:hover, 
+    .nav-icons-container .dropdown-trigger:hover {
+        color: #5a3b2e;
+        transform: scale(1.15);
+    }
+    .notification-dropdown {
+    width: 300px;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    background-color: #fdfcfb; /* Soft off-white */
+    padding: 0;
+    overflow: hidden;
+}
+
+.notification-header {
+    background-color: #cfc7bd; /* Matching your Creative Collection background */
+    color: #4b2e1e;
+    padding: 12px 15px;
+    font-family: 'Italiana', serif;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.notification-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 14px;
+    color: #333;
+    list-style: none; /* Removes bullet points */
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-item:hover {
+    background-color: #f5f1ed;
+}
     </style>
 </head>
 <body>
@@ -118,21 +184,52 @@
         </a>
 
         <!-- Right Side -->
-        <div class="d-flex align-items-center">
-        <form action="{% url 'search_results'%}" method="GET" class="position-relative">
-            <div class="position-relative">
-                <input type="text" name="q" class="search-bar" placeholder="Search products...">
-                <button type="submit" style="background:none; border:none; position:absolute; right:15px; top:8px; padding:0;">
-                    <i class="fa fa-search "></i>
-                </button>
-            </div>
-        </form>
-            <a href="cart.html" class="icon-btn position-relative">
-                <i class="fa fa-shopping-cart"></i>
-            </a>
-            <!--<button class="icon-btn"><i class="fa fa-user"></i></button>-->
-            <a href="{% url 'product_list' %}"> <a href="{% url 'user' %}" class="icon-btn"><i class="fa fa-user"></i></a>
+         <div class="d-flex align-items-center">
+    <form action="{% url 'search_results' %}" method="GET" class="position-relative">
+        <div class="position-relative">
+            <input type="text" name="q" class="search-bar" placeholder="Search products...">
+            <button type="submit" style="background:none; border:none; position:absolute; right:15px; top:8px; padding:0;">
+                <i class="fa fa-search"></i>
+            </button>
         </div>
+    </form>
+
+    <div class="nav-icons-container">
+        <div class="dropdown">
+            <button class="dropdown-trigger position-relative" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa fa-bell"></i>
+                {% if notif_count > 0 %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 9px; padding: 3px 5px;">
+                    {{ notif_count }}
+                </span>
+                {% endif %}
+            </button>
+           <ul class="dropdown-menu dropdown-menu-end notification-dropdown">
+                <div class="notification-header">Notifications</div>
+    
+                {% for n in notifications %}
+                <li class="notification-item">{{ n.message }}</li>
+                {% empty %}
+                <li class="notification-item text-muted">No new updates</li>
+                {% endfor %}
+          </ul>
+        </div>
+
+        <a href="{% url 'cart' %}" class="icon-btn position-relative" id="cart-link">
+            <i class="fa fa-shopping-cart" id="cart-icon"></i>
+            <span id="cart-count" class="position-absolute top-0 start-100 translate-middle rounded-pill bg-danger" style="font-size: 0.6rem;">0</span>
+            
+            <div id="cart-pop" class="position-absolute" style="display:none; top: 35px; right: 0; background: #5a3b2e; color: white; padding: 5px 10px; border-radius: 5px; font-size: 14px; white-space: nowrap; z-index: 1000;">
+                Check your cart! ↑
+                <div style="position: absolute; top: -5px; right: 15px; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid #5a3b2e;"></div>
+            </div>
+        </a>
+
+        <a href="{% url 'user' %}" class="icon-btn">
+            <i class="fa fa-user"></i>
+        </a>
+    </div>
+</div>
     </div>
 </nav>
 
@@ -242,25 +339,34 @@ function removeFromCart(name) {
 
 // New Checkout function to open the modal
 function checkout(amount) {
-    const cart = JSON.parse(localStorage.getItem('cart')) || {};
+    const savedData = localStorage.getItem('cart');
+    const cart = savedData ? JSON.parse(savedData) : {};
+    
     if (Object.keys(cart).length === 0) {
         alert("Your cart is empty.");
         return;
     }
     
-    // Check which radio button is selected
     const selectedMethod = document.querySelector('input[name="pay"]:checked');
-    
-    // If Cash on Delivery is selected, use old logic
-    if (selectedMethod && selectedMethod.parentNode.textContent.includes("Cash on Delivery")) {
-        alert("Order Placed Successfully via Cash on Delivery!");
-        localStorage.removeItem('cart');
-        renderCart();
+    const isCOD = selectedMethod && selectedMethod.parentNode.textContent.includes("Cash on Delivery");
+
+    if (isCOD) {
+        // Send to database immediately for Cash on Delivery
+        fetch('/place-order/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items: savedData, total: amount })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'success') {
+                alert("Order Placed Successfully via Cash on Delivery!");
+                localStorage.removeItem('cart');
+                renderCart();
+            }
+        });
     } else {
-        // Otherwise, open the Online Payment Modal
-       // document.getElementById('order-amount').textContent = amount;
-        openPaymentModal();
-        document.querySelectorAll('.pm-total').forEach(span =>{span.innerText = amount;});
+        openPaymentModal(); // For Khalti/eSewa
     }
 }
 
@@ -289,15 +395,38 @@ document.addEventListener('click', function(e) {
     if (e.target.classList.contains('pm-pay')) {
         // Process Payment Simulation
         const finalTotal  = document.querySelector('.pm-total').innerText;
+        const savedData = localStorage.getItem('cart');
         const orderNum = 'FNQ' + Math.floor(Math.random() * 1000000);
-        document.getElementById('order-number').textContent = orderNum;
-        document.getElementById('order-amount').textContent = finalTotal;
-        
-        setTimeout(() => {
-            localStorage.removeItem('cart');
-            renderCart();
-            showPanel('success');
-        }, 1000);
+
+        fetch('/place-order/', {
+            method: 'POST',
+            headers: {
+                'Content-Type':'application/json',
+                'X-CSRFToken':'{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                items: savedData,
+                total: finalTotal
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'success'){
+             
+                document.getElementById('order-number').textContent = orderNum;
+                document.getElementById('order-amount').textContent = finalTotal;
+
+                setTimeout(() => {
+                    localStorage.removeItem('cart');
+                    renderCart();
+                    showPanel('success');
+                }, 500);
+            } else {
+                alert("Error saving order. Please login first.")
+            }
+        })
+
+        .catch(error => console.error('Error:', error));
     }
 });
 

@@ -12,48 +12,125 @@
     <link href="https://fonts.googleapis.com/css2?family=PlayfairDisplay=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <style>
-        .navbar-custom {
-            background-color: #d9d4d4; /* Light grey */
-            padding: 10px 0;
-        }
-        .navbar-nav .nav-link {
-            font-family:'Italiana',serif;
-            font-size: 19px;
-            margin: 0 12px;
-            color: black;
-        }
-        .navbar-nav .nav-link:hover {
-            color: #5a3b2e; /* Brown hover */
-        }
-        .logo-text {
-            font-weight: bold;
-            font-family:'Italiana', serif;
-            font-size: 20px;
-            font-weight: regular;
-            color: #4b2e1e; /* Brown */
-        }
-        .search-bar {
-            border-radius: 50px;
-            padding: 5px 15px;
-            border: none;
-            outline: none;
-            width: 245px;
-        }
-        .icon-btn {
-            background: none;
-            border: none;
-            font-size: 18px;
-            margin-left: 10px;
-            cursor: pointer;
-            color: black;
-        }
-        .icon-btn:hover {
-        color: #5a3b2e; /* Brown hover */
-        /*animation: expand-contract 1s ease-in-out;*/
+<style>
+    .navbar-custom {
+        background-color: #d9d4d4;
+        padding: 10px 0;
+    }
+    .navbar-nav .nav-link {
+        font-family:'Italiana',serif;
+        font-size: 19px;
+        margin: 0 12px;
+        color: black;
+    }
+    .navbar-nav .nav-link:hover {
+        color: #5a3b2e;
+        transform: scale(1.15);
+        transition: all 0.25s ease-in-out;
+    }
+    .logo-text {
+        font-weight: bold;
+        font-family:'Italiana', serif;
+        font-size: 20px;
+        color: #4b2e1e;
+    }
+    .search-bar {
+        border-radius: 50px;
+        padding: 5px 15px;
+        border: none;
+        outline: none;
+        width: 245px;
+    }
+
+    /* --- ICON SPACING FIXES --- */
+    .nav-icons-container {
+        display: flex;
+        align-items: center;
+        gap: 20px; /* This ensures equal spacing */
+        margin-left: 15px;
+    }
+
+    /* Ensure icons, buttons, and links all behave the same */
+    .nav-icons-container .icon-btn, 
+    .nav-icons-container .dropdown-trigger {
+        margin: 0 !important;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px; 
+        height: 24px;
+        background: none;
+        border: none;
+        color: black;
+        cursor: pointer;
+        transition: transform 0.15s ease-in-out, color 0.3s ease-in-out;
+        text-decoration: none;
+    }
+
+    /* Combined Hover for all icons */
+    .nav-icons-container .icon-btn:hover, 
+    .nav-icons-container .dropdown-trigger:hover {
+        color: #5a3b2e;
         transform: scale(1.15);
     }
-    </style>
+    /* ------------------------- */
+
+    .btn-brown {
+        background-color: #7c5a43;
+        color: #fff;
+        border-radius: 20px;
+    }
+    .btn-brown:hover {
+        background-color: #5a3b2e;
+        color: #fff;
+    }
+    
+    @keyframes bounce-cart {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.3); }
+    }
+    .cart-animate {
+        animation: bounce-cart 0.5s ease-in-out;
+        color: #7c5a43 !important; 
+    }
+    /* Styled Notification Dropdown to match "Creative Collection" theme */
+.notification-dropdown {
+    width: 300px;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    background-color: #fdfcfb; /* Soft off-white */
+    padding: 0;
+    overflow: hidden;
+}
+
+.notification-header {
+    background-color: #cfc7bd; /* Matching your Creative Collection background */
+    color: #4b2e1e;
+    padding: 12px 15px;
+    font-family: 'Italiana', serif;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.notification-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 14px;
+    color: #333;
+    list-style: none; /* Removes bullet points */
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-item:hover {
+    background-color: #f5f1ed;
+}
+</style>
 </head>
 <body>
 
@@ -76,19 +153,51 @@
 
         <!-- Right Side -->
         <div class="d-flex align-items-center">
-        <form action="{% url 'search_results'%}" method="GET" class="position-relative">
-            <div class="position-relative">
-                <input type="text" name="q" class="search-bar" placeholder="Search products...">
-                <button type="submit" style="background:none; border:none; position:absolute; right:15px; top:8px; padding:0;">
-                    <i class="fa fa-search "></i>
-                </button>
-            </div>
-        </form>
-            <a href="{% url 'cart' %}" class="icon-btn"><i class="fa fa-shopping-cart"></i></a>
-            <!--<button class="icon-btn"><i class="fa fa-shopping-cart"></i></button>-->
-            <a href="{% url 'product_list' %}"> <a href="{% url 'user' %}" class="icon-btn"><i class="fa fa-user"></i></a>
-            <!--<button class="icon-btn"><i class="fa fa-user"></i></button>-->
+    <form action="{% url 'search_results' %}" method="GET" class="position-relative">
+        <div class="position-relative">
+            <input type="text" name="q" class="search-bar" placeholder="Search products...">
+            <button type="submit" style="background:none; border:none; position:absolute; right:15px; top:8px; padding:0;">
+                <i class="fa fa-search"></i>
+            </button>
         </div>
+    </form>
+
+    <div class="nav-icons-container">
+        <div class="dropdown">
+            <button class="dropdown-trigger position-relative" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa fa-bell"></i>
+                {% if notif_count > 0 %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 9px; padding: 3px 5px;">
+                    {{ notif_count }}
+                </span>
+                {% endif %}
+            </button>
+           <ul class="dropdown-menu dropdown-menu-end notification-dropdown">
+                <div class="notification-header">Notifications</div>
+    
+                {% for n in notifications %}
+                <li class="notification-item">{{ n.message }}</li>
+                {% empty %}
+                <li class="notification-item text-muted">No new updates</li>
+                {% endfor %}
+          </ul>
+        </div>
+
+        <a href="{% url 'cart' %}" class="icon-btn position-relative" id="cart-link">
+            <i class="fa fa-shopping-cart" id="cart-icon"></i>
+            <span id="cart-count" class="position-absolute top-0 start-100 translate-middle rounded-pill bg-danger" style="font-size: 0.6rem;">0</span>
+            
+            <div id="cart-pop" class="position-absolute" style="display:none; top: 35px; right: 0; background: #5a3b2e; color: white; padding: 5px 10px; border-radius: 5px; font-size: 14px; white-space: nowrap; z-index: 1000;">
+                Check your cart! ↑
+                <div style="position: absolute; top: -5px; right: 15px; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid #5a3b2e;"></div>
+            </div>
+        </a>
+
+        <a href="{% url 'user' %}" class="icon-btn">
+            <i class="fa fa-user"></i>
+        </a>
+    </div>
+</div>
     </div>
 </nav>
 <!-- Hero Section Start -->
@@ -118,7 +227,7 @@
                         <div class="d-flex justify-content-center align-items-center mb-3">
                             <span class="me-2" style="font-size: 0.9rem; font-family:'Italiana',serif; font-weight: bold;">No. of items</span>
                             <button class="btn btn-sm btn-outline-secondary" onclick="changeQty(this, -1)">-</button>
-                            <input type="text" class="form-control form-control-sm mx-1 text-center qty-input" value="0" style="width:40px;" readonly>
+                            <input type="text" class="form-control form-control-sm mx-1 text-center qty-input" value="0" style="width:40px;" data-stock="{{ product.stock }}" max="{{ product.stock}}" readonly>
                             <button class="btn btn-sm btn-outline-secondary" onclick="changeQty(this, 1)">+</button>
                         </div>
                         <button class="btn btn-brown add-to-cart w-75" style="font-family:'Josefin Sans', sans-serif;" onclick="addToCart('{{ product.name }}', this)">
@@ -216,40 +325,74 @@
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-
 // This uses Django's template engine to set a JS variable
 const isUserLoggedIn = "{{ user.is_authenticated|yesno:'true,false' }}";
+
 // 1. Function to handle + and - buttons
 function changeQty(btn, delta) {
     const input = btn.parentElement.querySelector('.qty-input');
+    const maxStock = parseInt(input.getAttribute('data-stock')) || 0;
     let val = parseInt(input.value) || 0;
-    val = Math.max(0, val + delta); // Prevents negative numbers
+    val = val + delta;
+
+    if (val < 0) {
+        val = 0;
+    } else if (val > maxStock) {
+        val = maxStock;
+        alert("Only " + maxStock + " items available in stock!");
+    }
     input.value = val;
 }
 
 // 2. Function to save items to LocalStorage
 function addToCart(itemName, btn) {
-    // 1. Check if user is logged in
+    // Check login status first
     if (isUserLoggedIn === "false") {
         var myModal = new bootstrap.Modal(document.getElementById('loginModal'));
         myModal.show();
-        return; // Stops the rest of the function
+        return;
     }
 
-    // 2. If logged in, continue with the normal cart logic
     const qtyInput = btn.parentElement.querySelector('.qty-input');
-    const qty = parseInt(qtyInput.value) || 0;
+    const qtyToAdd = parseInt(qtyInput.value) || 0;
+    const maxStock = parseInt(qtyInput.getAttribute('data-stock'));
 
-    if (qty > 0) {
+    if (qtyToAdd > 0) {
         let cart = JSON.parse(localStorage.getItem('cart')) || {};
-        cart[itemName] = (cart[itemName] || 0) + qty;
+        const currentInCart = cart[itemName] || 0;
+
+        // Stock validation
+        if (currentInCart + qtyToAdd > maxStock) {
+            alert("You already have " + currentInCart + " in your cart. You can only add " + (maxStock - currentInCart) + " more.");
+            return;
+        }
+
+        // Update cart data
+        cart[itemName] = currentInCart + qtyToAdd;
         localStorage.setItem('cart', JSON.stringify(cart));
         
         updateCartBadge();
 
-        // Feedback
-        btn.textContent = 'Added!';
-        setTimeout(() => { btn.textContent = 'Add to cart'; }, 1000);
+        // UI Feedback
+        const cartPop = document.getElementById('cart-pop');
+        const cartIcon = document.getElementById('cart-icon');
+        
+        if (cartPop && cartIcon) {
+            cartPop.style.display = 'block'; // FIXED: Removed 'const' here
+            cartIcon.classList.add('cart-animate');
+
+            const originalText = btn.textContent;
+            btn.textContent = 'Added!';
+            btn.classList.replace('btn-success', 'btn-brown');
+            
+            setTimeout(() => { 
+                btn.textContent = 'Add to cart'; 
+                btn.classList.replace('btn-success', 'btn-brown');
+                qtyInput.value = 0; 
+                cartPop.style.display = 'none'; 
+                cartIcon.classList.remove('cart-animate');
+            }, 2000);
+        }
     } else {
         alert("Please select at least 1 item.");
     }
@@ -268,8 +411,24 @@ function updateCartBadge() {
     }
 }
 
-// Run update on page load so the count stays if user refreshes
+// Run update on page load
 document.addEventListener('DOMContentLoaded', updateCartBadge);
 </script>
+
+<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="font-family: 'Italiana', serif;">
+      <div class="modal-header border-0">
+        <h5 class="modal-title">Sign In Required</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p>To provide you with the best experience, please sign in to add items to your cart.</p>
+        <a href="{% url 'user' %}" class="btn btn-brown w-100 py-2">Go to Login</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

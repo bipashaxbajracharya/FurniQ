@@ -64,6 +64,106 @@
         transform: scale(1.15);
     }
     
+    /* 1. The container stays fixed in size */
+    .category-card {
+        position: relative;
+        overflow: hidden; /* This crops the image so it doesn't push other items */
+        transition: box-shadow 0.3s ease;
+        width: 328px; /* Matching 280px image + 24px padding on both sides */
+        height: 328px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* 2. Only the image zooms, not the box */
+    .category-link:hover .category-card img {
+        transform: scale(1.1); /* Zoom inside the box */
+    }
+
+    /* 3. Smooth transition for the image */
+     .category-card img {
+        transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* 4. Shadow effect without moving the box */
+    .category-link:hover .category-card {
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+
+    .category-link {
+        text-decoration: none !important;
+        display: block;
+    }
+
+    /* Container for uniform icon spacing */
+.nav-icons-container {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Adjust this for the desired space between icons */
+    margin-left: 15px;
+}
+
+/* Ensure all icons (links and dropdown buttons) behave the same */
+.nav-icons-container .icon-btn, 
+.nav-icons-container .dropdown-trigger {
+    margin: 0 !important;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; /* Fixed width for perfect alignment */
+    height: 24px;
+    background: none;
+    border: none;
+    color: black;
+    transition: transform 0.15s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* Update this selector to include .dropdown-trigger */
+.icon-btn:hover, 
+.dropdown-trigger:hover {
+    color: #5a3b2e; /* Brown hover */
+    transform: scale(1.15);
+    transition: transform 0.15s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* Styled Notification Dropdown to match "Creative Collection" theme */
+.notification-dropdown {
+    width: 300px;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    background-color: #fdfcfb; /* Soft off-white */
+    padding: 0;
+    overflow: hidden;
+}
+
+.notification-header {
+    background-color: #cfc7bd; /* Matching your Creative Collection background */
+    color: #4b2e1e;
+    padding: 12px 15px;
+    font-family: 'Italiana', serif;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.notification-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 14px;
+    color: #333;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-item:hover {
+    background-color: #f5f1ed;
+}
+
     </style>
 
 </head>
@@ -104,31 +204,46 @@
 
         <!-- Right Side -->
         <div class="d-flex align-items-center">
-
-            <form action="{% url 'search_results' %}" method="GET" class="position-relative">
-
-
-                <div class="position-relative">
-                    <input type="text" name = "q" class="search-bar" placeholder="Search products...">
-                    <button type="submit" style="background:none; border:none; position:absolute; right:15px; top:8px; padding:0;">
-                    <i class="fa fa-search "></i>
-                    </button>
-                </div>
-            </form>
-
-            <a href="{% url 'cart' %}" class="icon-btn"><i class="fa fa-shopping-cart"></i></a>
-
-            <a href="{% url 'product_list' %}"> <a href="{% url 'user' %}" class="icon-btn"><i class="fa fa-user"></i></a>
-            <!--<button class="icon-btn"><i class="fa fa-user"></i></button>-->
-           
-            
+    <form action="{% url 'search_results' %}" method="GET" class="position-relative">
+        <div class="position-relative">
+            <input type="text" name="q" class="search-bar" placeholder="Search products...">
+            <button type="submit" style="background:none; border:none; position:absolute; right:15px; top:8px; padding:0;">
+                <i class="fa fa-search"></i>
+            </button>
         </div>
+    </form>
+
+    <div class="nav-icons-container">
+        <div class="dropdown">
+            <button class="dropdown-trigger position-relative" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fa fa-bell"></i>
+                {% if notif_count > 0 %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 9px; padding: 3px 5px;">
+                    {{ notif_count }}
+                </span>
+                {% endif %}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end notification-dropdown">
+                <div class="notification-header">Notifications</div>
+                {% for n in notifications %}
+                <li class="notification-item">{{ n.message }}</li>
+                {% empty %}
+                <li class="notification-item text-muted">No new updates</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <a href="{% url 'cart' %}" class="icon-btn"><i class="fa fa-shopping-cart"></i></a>
+
+        <a href="{% url 'user' %}" class="icon-btn"><i class="fa fa-user"></i></a>
+    </div>
+</div>
     </div>
 </nav>
 
 <!-- Hero Section -->
 <div class="hero-section" style="position:relative;">
-    <img src="{% static 'images/hero section.jpg' %}" alt="Living Room" style="width:100%; height:420px; object-fit:cover;">
+    <img src="{% static 'images/hero section.jpeg' %}" alt="Living Room" style="width:100%; height:420px; object-fit:cover;">
     <h1 style="
         position:absolute;
         top:20%;
@@ -164,80 +279,34 @@
     <p class="featured-subtitle" style="font-weight: bold; font-family:'Italiana',serif; font-size:18px; margin-bottom:40px; text-align:left; color:#333;">
         Some of our best selling products
     </p>
-    <div class="row g-5">
-        <!-- Product 1 -->
+   <div class="row g-5">
+        {% for product in products %}
         <div class="col-md-4">
             <div class="card border-0 shadow-sm" style="border-radius:24px;">
-                <img src="{% static 'images/Florashell chair.jpeg' %}" class="card-img-top" alt="Floralshell Chair" style="border-radius:24px; height:270px; object-fit:cover;">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="border-radius:24px; height:270px; object-fit: cover;">
+                {% else %}
+                    <img src="{% static 'images/default.jpg' %}" class="card-img-top" style="border-radius:24px; height:270px; object-fit: cover;">
+                {% endif %}
+                
                 <div class="card-body text-left px-3">
-                    <div style="font-family:'Italiana',serif; font-size:20px; font-weight: bold;">Floralshell Chair</div>
-                    
-                    <div style="font-family:'Italiana',serif; font-size:17px;font-weight: bold;">
-                        Rs 9000 <span style="text-decoration:line-through; color:#777; margin-left:8px;">Rs 10000</span>
-                    </div>
+                <div style="font-family:'Italiana',serif; font-size:20px; font-weight: bold;">{{ product.name }}</div>
+    
+                <div style="font-family:'Italiana',serif; font-size:17px; font-weight: bold;">
+                    Rs {{ product.price }} 
+        
+                    {% if product.old_price %}
+                    <span style="text-decoration: line-through; color: #888; margin-left: 10px; font-weight: normal;">
+                        Rs {{ product.old_price }}
+                    </span>
+                    {% endif %}
                 </div>
             </div>
-        </div>
-        <!-- Product 2 -->
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm" style="border-radius:24px;">
-                <img src="{% static 'images/Fuzzy sofa.jpeg' %}" class="card-img-top" alt="Fuzzy Sofa" style="border-radius:24px; height:270px; object-fit:cover;">
-                <div class="card-body text-left px-3">
-                    <div style="font-family:'Italiana',serif; font-size:20px; font-weight: bold;">Fuzzy Sofa</div>
-                    <div style="font-family:'Italiana',serif; font-size:17px; font-weight: bold;">
-                        Rs 15000 <span style="text-decoration:line-through; color:#777; margin-left:8px;">Rs 10000</span>
-                    </div>
-                </div>
             </div>
         </div>
-        <!-- Product 3 -->
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm" style="border-radius:24px;">
-                <img src="{% static 'images/Puffy bed.jpeg' %}" class="card-img-top" alt="Puffy Bed" style="border-radius:24px; height:270px; object-fit:cover;">
-                <div class="card-body text-left px-3">
-                    <div style="font-family:'Italiana',serif; font-size:20px; font-weight: bold;">Puffy Bed</div>
-                    <div style="font-family:'Italiana',serif; font-size:17px; font-weight: bold;">
-                        Rs 90000 <span style="text-decoration:line-through; color:#777; margin-left:8px;">Rs 80000</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Product 4 -->
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm" style="border-radius:24px;">
-                <img src="{% static 'images/Bedside Table.jpeg' %}" class="card-img-top" alt="Bedside Table Wooden" style="border-radius:24px; height:270px; object-fit:cover;">
-                <div class="card-body text-left px-3">
-                    <div style="font-family:'Italiana',serif; font-size:20px; font-weight: bold;">Bedside Table Wooden</div>
-                    <div style="font-family:'Italiana',serif; font-size:17px; font-weight: bold;">
-                        Rs 12000 <span style="text-decoration:line-through; color:#777; margin-left:8px;">Rs 18000 </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Product 5 -->
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm" style="border-radius:24px;">
-                <img src="{% static 'images/Coffee Table.jpeg' %}" class="card-img-top" alt="Coffee Table Marble" style="border-radius:24px; height:270px; object-fit:cover;">
-                <div class="card-body text-left px-3">
-                    <div style="font-family:'Italiana',serif; font-size:20px; font-weight: bold;">Coffee Table Marble</div>
-                    <div style="font-family:'Italiana',serif; font-size:17px; font-weight: bold;">
-                        Rs 90000 <span style="text-decoration:line-through; color:#777; margin-left:8px;">Rs 100000</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Product 6 -->
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm" style="border-radius:24px;">
-                <img src="{% static 'images/Dining Table Set.jpeg' %}" class="card-img-top" alt="Dining Table Set" style="border-radius:24px; height:270px; object-fit:cover;">
-                <div class="card-body text-left px-3">
-                    <div style="font-family:'Italiana',serif; font-size:20px; font-weight: bold;">Dining Table Set</div>
-                    <div style="font-family:'Italiana',serif; font-size:17px; font-weight: bold;">
-                        Rs 100000 <span style="text-decoration:line-through; color:#777; margin-left:8px;">Rs 110000</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% empty %}
+        <p>No products available at the moment.</p>
+        {% endfor %}
     </div>
 </div>
 
@@ -245,15 +314,15 @@
 <div class="container-fluid py-5" style="background:#cfc7bd;">
     <div class="row align-items-center justify-content-center">
         <div class="col-lg-6 px-5">
-            <h2 style="font-family:'Italiana',serif; font-size:28px; margin-bottom:18px;font-weight: bold;">
+            <h2 style="font-family:'Italiana',serif; font-size:38px; margin-bottom:18px;font-weight: bold;">
                 Introducing Creative Collection For Your Interior
             </h2>
-            <p style="font-family:'Josefin Sans', sans-serif; font-size:20px;">
+            <p style="font-family:'Josefin Sans', sans-serif; font-size:28px;">
                 Transform your space with FurniQ—where innovative design meets effortless management, turning your furniture vision into reality.
             </p>
         </div>
         <div class="col-lg-5 d-flex justify-content-center">
-            <img src="{% static 'images/Creative collection.jpeg' %}" alt="Creative Collection" class="img-fluid shadow" style="border-radius:32px; max-width:90%; min-width:280px;">
+            <img src="{% static 'images/Creative collection.jpeg' %}" alt="Creative Collection" class="img-fluid shadow" style="border-radius:32px; max-width:20%; min-width:280px;">
         </div>
     </div>
 </div>
@@ -265,22 +334,30 @@
     </h2>
     <div class="row justify-content-center">
         <div class="col-md-4 d-flex flex-column align-items-center mb-4">
-            <div class="shadow-sm bg-white" style="border-radius:8px; padding:24px;">
-                <img src="{% static 'images/Dining.jpeg' %}" alt="Dining" style="width:280px; height:280px; object-fit:contain;">
-            </div>
-            <div style="font-family:'Italiana',serif; font-size:20px; margin-top:12px;">Dining</div>
+            <a href="{% url 'dining' %}" class="category-link text-decoration-none text-dark">
+                <div class="category-card shadow-sm bg-white" style="border-radius:8px; padding:24px; overflow:hidden;">
+                    <img src="{% static 'images/Dining.jpeg' %}" alt="Dining" style="width:280px; height:280px; object-fit:contain; transition: transform 0.3s ease;">
+                </div>
+                <div style="font-family:'Italiana',serif; font-size:20px; margin-top:12px; text-align:center;">Dining</div>
+            </a>
         </div>
+
         <div class="col-md-4 d-flex flex-column align-items-center mb-4">
-            <div class="shadow-sm bg-white" style="border-radius:8px; padding:24px;">
-                <img src="{% static 'images/Living Room.jpeg' %}" alt="Living Room" style="width: 280px; height:280px; object-fit:contain;">
-            </div>
-            <div style="font-family:'Italiana',serif; font-size:20px; margin-top:12px;">Living Room</div>
+            <a href="{% url 'livingroom' %}" class="category-link text-decoration-none text-dark">
+                <div class="category-card shadow-sm bg-white" style="border-radius:8px; padding:24px; overflow:hidden;">
+                    <img src="{% static 'images/Living Room.jpeg' %}" alt="Living Room" style="width: 280px; height:280px; object-fit:contain; transition: transform 0.3s ease;">
+                </div>
+                <div style="font-family:'Italiana',serif; font-size:20px; margin-top:12px; text-align:center;">Living Room</div>
+            </a>
         </div>
+
         <div class="col-md-4 d-flex flex-column align-items-center mb-4">
-            <div class="shadow-sm bg-white" style="border-radius:8px; padding:24px;">
-                <img src="{% static 'images/Bedroom.jpeg' %}" alt="Bedroom" style="width:280px; height:280px; object-fit:contain;">
-            </div>
-            <div style="font-family:'Italiana',serif; font-size:20px; margin-top:12px;">Bedroom</div>
+            <a href="{% url 'bedroom' %}" class="category-link text-decoration-none text-dark">
+                <div class="category-card shadow-sm bg-white" style="border-radius:8px; padding:24px; overflow:hidden;">
+                    <img src="{% static 'images/Bedroom.jpeg' %}" alt="Bedroom" style="width:280px; height:280px; object-fit:contain; transition: transform 0.3s ease;">
+                </div>
+                <div style="font-family:'Italiana',serif; font-size:20px; margin-top:12px; text-align:center;">Bedroom</div>
+            </a>
         </div>
     </div>
 </div>

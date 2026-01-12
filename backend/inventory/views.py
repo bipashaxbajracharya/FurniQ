@@ -1,15 +1,21 @@
+import json
+import re
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required #This gives access to staffs only
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.models import User, Group
-from .models import Product
+from .models import Product, Profile, Order, Notification
+from django.views.decorators.csrf import csrf_exempt
 # This part gets your data from your database and sends to the screen.
 
 #Customer homepage
 def home(request):
-    return render(request, 'inventory/index.html')
+    
+    products = Product.objects.filter(is_featured=True)[:6]
+    return render(request, 'inventory/index.html', {'products': products})
 
 def bedroom(request):
     products = Product.objects.filter(category='Bedroom')
@@ -54,27 +60,37 @@ def signout(request):
 
 def register(request):
     if request.method == 'POST':
-        u = request.POST.get('username')
-        e = request.POST.get('email')
-        p = request.POST.get('password')
+        full_name = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        phone = request.POST.get('phone') # This captures the country code + number
         role = request.POST.get('role')
-        #check if user already exist!!
-        if User.objects.filter(username=u).exists():
-            messages.error(request, "Username already taken!")
-            return render(request, 'inventory/register.html')
-        #create new user
-        new_user = User.objects.create_user(username=u, email=e, password=p)
-        
-        #role assignment
-        if role == 'staff':
-            new_user.is_staff = True   # Allows access to @login_required pages for staff
-            new_user.save()
-            messages.success(request, "Staff account created! Please login.")
-        else:
-            messages.success(request, "Account created successfully!")
-        return redirect('user')    # Take them to the login page
-    return render(request, 'inventory/register.html')
 
+        if User.objects.filter(username=email).exists():
+            messages.error(request, "This email is already registered.")
+            return redirect('register')
+
+        # 1. Create the User (visible in Admin)
+        user = User.objects.create_user(
+            username=email, 
+            email=email, 
+            password=password,
+            first_name=full_name
+        )
+        
+        # 2. Assign Staff Role
+        if role == 'staff':
+            user.is_staff = True
+            user.save()
+
+        # 3. Create the Profile (Saves the Phone Number!)
+        Profile.objects.create(user=user, phone_number=phone)
+
+        messages.success(request, f"Welcome {full_name}! Your FurniQ account is ready.")
+        return redirect('user') 
+
+    return render(request, 'register.html') # Ensure this path matches your folder
+    
 def search_results(request):
     query = request.GET.get('q')
     if query:
@@ -88,6 +104,31 @@ def search_results(request):
 
 #for staffs
 @login_required (login_url='user') #This "locks" the page
+
+
+def mark_notifications_read(request):
+    if request.method == 'POST':
+        Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error'}, status=400)
+def staff_orders(request):
+    if not request.user.is_staff:
+        return redirect('home')
+    
+    # Show orders assigned to this specific staff member
+    assigned_orders = Order.objects.filter(assigned_staff=request.user).order_by('-order_date')
+    return render(request, 'inventory/staff_orders.html', {'orders': assigned_orders})
+
+@csrf_exempt
+def place_order(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        Order.objects.create(
+            customer=request.user,
+            items_summary=data['items'],
+            total_price=data['total']
+        )
+        return JsonResponse({'status' : 'success'})
 
 def update_stock(request, product_id):
     if request.method == 'POST':

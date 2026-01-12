@@ -1,0 +1,26 @@
+/* Header and Navigation Bar */
+#header, .breadcrumbs {
+    background: #453126 !important; /* Dark wood brown */
+    color: rgb(248, 242, 231);
+}
+
+/* Module Headers (Inventory, Authentication, etc.) */
+.module h2, .module caption, .inline-group h2 {
+    background: #7c5a43 !important; /* FurniQ Brown */
+}
+
+/* Login Page & Action Buttons */
+.button, input[type=submit], input[type=button], .submit-row input {
+    background: #7c5a43 !important;
+    border: none !important;
+    border-radius: 4px !important;
+}
+
+/* Sidebar and Links */
+#changelist-filter h2 {
+    background: #4b2e1e !important;
+}
+
+a:link, a:visited {
+    color: #7c5a43 !important;
+}
